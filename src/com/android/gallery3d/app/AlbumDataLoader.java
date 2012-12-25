@@ -282,6 +282,7 @@ public class AlbumDataLoader {
 
         @Override
         public Void call() throws Exception {
+            boolean deleteLast = true;
             UpdateInfo info = mUpdateInfo;
             mSourceVersion = info.version;
             if (mSize != info.size) {
@@ -317,6 +318,7 @@ public class AlbumDataLoader {
                 }
 
                 if (mItemVersion[index] != itemVersion) {
+                    deleteLast = false;
                     mItemVersion[index] = itemVersion;
                     mData[index] = updateItem;
                     if (mDataListener != null && i >= mActiveStart && i < mActiveEnd) {
@@ -324,6 +326,9 @@ public class AlbumDataLoader {
                     }
                 }
             }
+            if (deleteLast && mDataListener != null)
+                mDataListener.onContentChanged(mActiveEnd-1);
+
             return null;
         }
     }
