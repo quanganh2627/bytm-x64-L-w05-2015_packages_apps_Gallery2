@@ -97,22 +97,24 @@ public class MtpClient {
                         }
                     }
                 } else if (ACTION_USB_PERMISSION.equals(action)) {
-                    mRequestPermissionDevices.remove(deviceName);
-                    boolean permission = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED,
-                            false);
-                    Log.d(TAG, "ACTION_USB_PERMISSION: " + permission);
-                    if (permission) {
-                        if (mtpDevice == null) {
-                            mtpDevice = openDeviceLocked(usbDevice);
-                        }
-                        if (mtpDevice != null) {
-                            for (Listener listener : mListeners) {
-                                listener.deviceAdded(mtpDevice);
+                    if (mRequestPermissionDevices.contains(deviceName)) {
+                        mRequestPermissionDevices.remove(deviceName);
+                        boolean permission = intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED,
+                                false);
+                        Log.d(TAG, "ACTION_USB_PERMISSION: " + permission);
+                        if (permission) {
+                            if (mtpDevice == null) {
+                                mtpDevice = openDeviceLocked(usbDevice);
                             }
+                            if (mtpDevice != null) {
+                                for (Listener listener : mListeners) {
+                                    listener.deviceAdded(mtpDevice);
+                                }
+                            }
+                        } else {
+                            // so we don't ask for permission again
+                            mIgnoredDevices.add(deviceName);
                         }
-                    } else {
-                        // so we don't ask for permission again
-                        mIgnoredDevices.add(deviceName);
                     }
                 }
             }
