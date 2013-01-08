@@ -228,7 +228,15 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         ImagePreset preset = params[0];
 
         try {
-            Bitmap bitmap = preset.apply(loadMutableBitmap());
+//            Bitmap bitmap = preset.apply(loadMutableBitmap());
+            Bitmap bitmap = loadMutableBitmap();
+            //Ensure bitmap in 8888 format, good for editing as well as GL compatible.
+            if ((bitmap != null) && (bitmap.getConfig() != Bitmap.Config.ARGB_8888)) {
+                Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
+                bitmap.recycle();
+                bitmap = copy;
+            }
+            bitmap = preset.apply(bitmap);
 
             Object xmp = null;
             InputStream is = null;
