@@ -56,6 +56,9 @@ public class DirectPresetCache implements Cache {
 
     @Override
     public void setOriginalBitmap(Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
         mOriginalBitmap = bitmap;
         notifyObservers();
     }
