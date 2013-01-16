@@ -150,6 +150,9 @@ public class DirectPresetCache implements Cache {
 
     protected void compute(CachedPreset cache) {
         cache.mBitmap = null;
+        if (mOriginalBitmap == null) {
+            return;
+        }
         cache.mBitmap = mOriginalBitmap.copy(mBitmapConfig, true);
         float scaleFactor = (float) cache.mBitmap.getWidth() / (float) mLoader.getOriginalBounds().width();
         if (scaleFactor < 1.0f) {
