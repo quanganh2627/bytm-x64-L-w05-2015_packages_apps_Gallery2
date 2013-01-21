@@ -116,8 +116,10 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onDestroy() {
-            mSource.close();
-            mSource = null;
+           synchronized (mSource) {
+                mSource.close();
+                mSource = null;
+            }
         }
 
         @Override
@@ -151,16 +153,19 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public RemoteViews getViewAt(int position) {
-            Bitmap bitmap = mSource.getImage(position);
-            if (bitmap == null) return getLoadingView();
-            RemoteViews views = new RemoteViews(
-                    mApp.getAndroidContext().getPackageName(),
-                    R.layout.appwidget_photo_item);
-            views.setImageViewBitmap(R.id.appwidget_photo_item, bitmap);
-            views.setOnClickFillInIntent(R.id.appwidget_photo_item, new Intent()
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .setData(mSource.getContentUri(position)));
-            return views;
+           synchronized (mSource) {
+                if (mSource == null) return null;
+                Bitmap bitmap = mSource.getImage(position);
+                if (bitmap == null) return getLoadingView();
+                RemoteViews views = new RemoteViews(
+                        mApp.getAndroidContext().getPackageName(),
+                        R.layout.appwidget_photo_item);
+                views.setImageViewBitmap(R.id.appwidget_photo_item, bitmap);
+                views.setOnClickFillInIntent(R.id.appwidget_photo_item, new Intent()
+                       .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                       .setData(mSource.getContentUri(position)));
+                return views;
+            }
         }
 
         @Override
