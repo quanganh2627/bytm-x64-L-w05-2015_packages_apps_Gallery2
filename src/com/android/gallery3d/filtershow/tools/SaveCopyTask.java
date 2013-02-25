@@ -236,7 +236,8 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 bitmap.recycle();
                 bitmap = copy;
             }
-            bitmap = preset.apply(bitmap);
+            if (bitmap != null)
+                bitmap = preset.apply(bitmap);
 
             Object xmp = null;
             InputStream is = null;
