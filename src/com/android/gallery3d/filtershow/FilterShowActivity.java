@@ -458,6 +458,10 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
     @Override
     protected void onDestroy() {
+        if (mImageLoader != null) {
+            mImageLoader.quitThread();
+        }
+        ImageFilterRS.clearRenderScriptContext();
         if (mLoadBitmapTask != null) {
             mLoadBitmapTask.cancel(false);
         }

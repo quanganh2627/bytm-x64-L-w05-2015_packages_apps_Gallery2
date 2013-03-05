@@ -93,6 +93,12 @@ public class ImageLoader {
         mHiresCache = new DelayedPresetCache(this, 3);
     }
 
+
+    public void quitThread() {
+        ((DelayedPresetCache)mCache).quitThread();
+        ((DelayedPresetCache)mHiresCache).quitThread();
+    }
+
     public static int getZoomOrientation() {
         return mZoomOrientation;
     }
