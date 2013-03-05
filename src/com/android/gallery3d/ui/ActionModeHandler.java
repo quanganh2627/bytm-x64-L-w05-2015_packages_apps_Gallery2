@@ -391,6 +391,7 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     }
 
     public void updateSupportedOperation() {
+        MenuExecutor.updateMenuOperation(mMenu, MediaObject.SUPPORT_NONE);
         // Interrupt previous unfinished task, mMenuTask is only accessed in main thread
         if (mMenuTask != null) mMenuTask.cancel();
 
