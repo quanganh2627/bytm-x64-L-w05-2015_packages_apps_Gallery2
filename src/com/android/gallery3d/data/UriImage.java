@@ -138,8 +138,8 @@ public class UriImage extends MediaItem {
         jc.setCancelListener(new CancelListener() {
             @Override
             public void onCancel() {
-                synchronized (UriImage.this) {
-                    UriImage.this.notifyAll();
+                synchronized (this) {
+                    notifyAll();
                 }
             }
         });
