@@ -72,7 +72,7 @@ import com.android.gallery3d.ui.SynchronizedHandler;
 import com.android.gallery3d.util.GalleryUtils;
 
 public class PhotoPage extends ActivityState implements
-        PhotoView.Listener, OrientationManager.Listener, AppBridge.Server,
+        PhotoView.Listener, AppBridge.Server,
         PhotoPageBottomControls.Delegate, GalleryActionBar.OnAlbumModeSelectedListener {
     private static final String TAG = "PhotoPage";
 
@@ -285,7 +285,6 @@ public class PhotoPage extends ActivityState implements
         mRootPane.addComponent(mPhotoView);
         mApplication = (GalleryApp) ((Activity) mActivity).getApplication();
         mOrientationManager = mActivity.getOrientationManager();
-        mOrientationManager.addListener(this);
         mActivity.getGLRoot().setOrientationSource(mOrientationManager);
 
         mHandler = new SynchronizedHandler(mActivity.getGLRoot()) {
@@ -305,7 +304,9 @@ public class PhotoPage extends ActivityState implements
                         break;
                     }
                     case MSG_ON_FULL_SCREEN_CHANGED: {
-                        mAppBridge.onFullScreenChanged(message.arg1 == 1);
+                        if (mAppBridge != null) {
+                            mAppBridge.onFullScreenChanged(message.arg1 == 1);
+                        }
                         break;
                     }
                     case MSG_UPDATE_ACTION_BAR: {
@@ -865,11 +866,6 @@ public class PhotoPage extends ActivityState implements
     }
 
     @Override
-    public void onOrientationCompensationChanged() {
-        mActivity.getGLRoot().requestLayoutContentPane();
-    }
-
-    @Override
     protected void onBackPressed() {
         if (mShowDetails) {
             hideDetails();
@@ -1199,7 +1195,8 @@ public class PhotoPage extends ActivityState implements
         onCommitDeleteImage();  // commit the previous deletion
         mDeletePath = path;
         mDeleteIsFocus = (offset == 0);
-        mMediaSet.addDeletion(path, mCurrentIndex + offset);
+        if(mMediaSet != null)
+            mMediaSet.addDeletion(path, mCurrentIndex + offset);
     }
 
     @Override
@@ -1208,7 +1205,8 @@ public class PhotoPage extends ActivityState implements
         // If the deletion was done on the focused item, we want the model to
         // focus on it when it is undeleted.
         if (mDeleteIsFocus) mModel.setFocusHintPath(mDeletePath);
-        mMediaSet.removeDeletion(mDeletePath);
+        if(mMediaSet != null)
+            mMediaSet.removeDeletion(mDeletePath);
         mDeletePath = null;
     }
 
@@ -1362,7 +1360,7 @@ public class PhotoPage extends ActivityState implements
                     // Account for preview/placeholder being the first item
                     resumeIndex++;
                 }
-                if (resumeIndex < mMediaSet.getMediaItemCount()) {
+                if ((mMediaSet != null) && (resumeIndex < mMediaSet.getMediaItemCount())) {
                     mCurrentIndex = resumeIndex;
                     mModel.moveTo(mCurrentIndex);
                 }
@@ -1424,7 +1422,6 @@ public class PhotoPage extends ActivityState implements
             mScreenNailSet = null;
             mScreenNailItem = null;
         }
-        mOrientationManager.removeListener(this);
         mActivity.getGLRoot().setOrientationSource(null);
         if (mBottomControls != null) mBottomControls.cleanup();
 

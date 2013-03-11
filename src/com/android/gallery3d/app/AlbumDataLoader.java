@@ -282,6 +282,7 @@ public class AlbumDataLoader {
 
         @Override
         public Void call() throws Exception {
+            boolean deleteLast = true;
             UpdateInfo info = mUpdateInfo;
             mSourceVersion = info.version;
             if (mSize != info.size) {
@@ -308,8 +309,16 @@ public class AlbumDataLoader {
                 int index = i % DATA_CACHE_SIZE;
                 mSetVersion[index] = info.version;
                 MediaItem updateItem = items.get(i - info.reloadStart);
-                long itemVersion = updateItem.getDataVersion();
+                long itemVersion;
+                try {
+                    itemVersion = updateItem.getDataVersion();
+                } catch (NullPointerException ex) {
+                    Log.d(TAG, "The item has been deleted");
+                    continue;
+                }
+
                 if (mItemVersion[index] != itemVersion) {
+                    deleteLast = false;
                     mItemVersion[index] = itemVersion;
                     mData[index] = updateItem;
                     if (mDataListener != null && i >= mActiveStart && i < mActiveEnd) {
@@ -317,6 +326,9 @@ public class AlbumDataLoader {
                     }
                 }
             }
+            if (deleteLast && mDataListener != null)
+                mDataListener.onContentChanged(mActiveEnd-1);
+
             return null;
         }
     }

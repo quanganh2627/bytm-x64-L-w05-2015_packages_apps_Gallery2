@@ -226,12 +226,14 @@ public class GLRootView extends GLSurfaceView
         int compensation = 0;
 
         // Get the new orientation values
-        if (mOrientationSource != null) {
-            displayRotation = mOrientationSource.getDisplayRotation();
-            compensation = mOrientationSource.getCompensation();
-        } else {
-            displayRotation = 0;
-            compensation = 0;
+        synchronized(GLRootView.this) {
+            if (mOrientationSource != null) {
+                displayRotation = mOrientationSource.getDisplayRotation();
+                compensation = mOrientationSource.getCompensation();
+            } else {
+                displayRotation = 0;
+                compensation = 0;
+            }
         }
 
         if (mCompensation != compensation) {
@@ -392,7 +394,11 @@ public class GLRootView extends GLSurfaceView
 
         mRenderRequested = false;
 
-        if ((mFlags & FLAG_NEED_LAYOUT) != 0) layoutContentPane();
+        if ((mOrientationSource != null
+                && mDisplayRotation != mOrientationSource.getDisplayRotation())
+                || (mFlags & FLAG_NEED_LAYOUT) != 0) {
+            layoutContentPane();
+        }
 
         mCanvas.save(GLCanvas.SAVE_FLAG_ALL);
         rotateCanvas(-mCompensation);
@@ -529,7 +535,9 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public void setOrientationSource(OrientationSource source) {
-        mOrientationSource = source;
+        synchronized(GLRootView.this) {
+            mOrientationSource = source;
+        }
     }
 
     @Override
