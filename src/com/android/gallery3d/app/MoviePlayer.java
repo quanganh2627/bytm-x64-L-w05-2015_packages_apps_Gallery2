@@ -69,7 +69,6 @@ public class MoviePlayer implements
     private static final String CMDPAUSE = "pause";
 
     private static final String VIRTUALIZE_EXTRA = "virtualize";
-    private static final long BLACK_TIMEOUT = 500;
 
     // If we resume the acitivty with in RESUMEABLE_TIMEOUT, we will keep playing.
     // Otherwise, we pause the player.
@@ -169,18 +168,6 @@ public class MoviePlayer implements
                 setProgress();
             }
         });
-
-        // The SurfaceView is transparent before drawing the first frame.
-        // This makes the UI flashing when open a video. (black -> old screen
-        // -> video) However, we have no way to know the timing of the first
-        // frame. So, we hide the VideoView for a while to make sure the
-        // video has been drawn on it.
-        mVideoView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mVideoView.setVisibility(View.VISIBLE);
-            }
-        }, BLACK_TIMEOUT);
 
         setOnSystemUiVisibilityChangeListener();
         // Hide system UI by default
