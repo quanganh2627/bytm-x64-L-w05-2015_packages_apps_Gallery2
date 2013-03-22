@@ -105,6 +105,7 @@ public class AlbumSetDataLoader {
     public void pause() {
         mReloadTask.terminate();
         mReloadTask = null;
+        mSourceVersion = MediaObject.INVALID_DATA_VERSION;
         mSource.removeContentListener(mSourceListener);
     }
 
