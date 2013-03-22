@@ -282,10 +282,11 @@ public class AlbumDataLoader {
 
         @Override
         public Void call() throws Exception {
-            boolean deleteLast = true;
+            boolean deleteLast = false;
             UpdateInfo info = mUpdateInfo;
             mSourceVersion = info.version;
             if (mSize != info.size) {
+                deleteLast = true;
                 mSize = info.size;
                 if (mDataListener != null) mDataListener.onSizeChanged(mSize);
                 if (mContentEnd > mSize) mContentEnd = mSize;
