@@ -140,6 +140,7 @@ public class TrimVideo extends Activity implements
             mHasPaused = false;
         }
         mHandler.post(mProgressChecker);
+        mVideoView.seekTo(mTrimStartTime);
     }
 
     @Override
