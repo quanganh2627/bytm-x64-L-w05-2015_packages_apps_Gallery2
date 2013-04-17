@@ -245,11 +245,13 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 is = context.getContentResolver().openInputStream(sourceUri);
                 xmp =  XmpUtilHelper.extractXMPMeta(is);
             }
-            saveBitmap(bitmap, this.destinationFile, xmp);
+            if (bitmap != null)
+                saveBitmap(bitmap, this.destinationFile, xmp);
             copyExif(sourceUri, destinationFile.getAbsolutePath());
 
             Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
-            bitmap.recycle();
+            if (bitmap != null)
+                bitmap.recycle();
             return uri;
 
         } catch (FileNotFoundException ex) {
