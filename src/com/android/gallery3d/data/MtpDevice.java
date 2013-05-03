@@ -38,7 +38,7 @@ public class MtpDevice extends MediaSet {
     private final int mDeviceId;
     private final String mDeviceName;
     private final MtpContext mMtpContext;
-    private final String mName;
+    private String mName;
     private final ChangeNotifier mNotifier;
     private final Path mItemPath;
     private List<MtpObjectInfo> mJpegChildren;
@@ -139,6 +139,10 @@ public class MtpDevice extends MediaSet {
             }
         }
         return result;
+    }
+
+    public void reloadDeviceName() {
+        mName = MtpDeviceSet.getDeviceName(mMtpContext, mDeviceId);
     }
 
     @Override
