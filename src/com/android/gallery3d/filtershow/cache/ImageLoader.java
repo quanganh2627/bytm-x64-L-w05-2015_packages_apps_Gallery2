@@ -43,6 +43,7 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.XmpUtilHelper;
+import com.android.gallery3d.common.BitmapUtils;
 
 import java.io.Closeable;
 import java.io.File;
@@ -271,6 +272,8 @@ public class ImageLoader {
 
             int width_tmp = o.outWidth;
             int height_tmp = o.outHeight;
+            int width_org = width_tmp;
+            int height_org = height_tmp;
 
             mOriginalBounds = new Rect(0, 0, width_tmp, height_tmp);
 
@@ -292,7 +295,14 @@ public class ImageLoader {
 
             closeStream(is);
             is = mContext.getContentResolver().openInputStream(uri);
-            return BitmapFactory.decodeStream(is, null, o2);
+            Bitmap retBitmap = BitmapFactory.decodeStream(is, null, o2);
+
+            // We need to resize down if the decoder does not support inSampleSize.
+            // (For example, GIF/WBMP images.)
+            if(retBitmap != null && (retBitmap.getWidth() == width_org && retBitmap.getHeight() == height_org)) {
+                retBitmap = BitmapUtils.resizeBitmapByScale(retBitmap, 1/(float)scale, true);
+            }
+            return retBitmap;
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
         } catch (Exception e) {
