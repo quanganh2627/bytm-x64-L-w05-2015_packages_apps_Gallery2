@@ -91,10 +91,11 @@ public class MtpClient {
                     if (mtpDevice != null) {
                         mDevices.remove(deviceName);
                         mRequestPermissionDevices.remove(deviceName);
-                        mIgnoredDevices.remove(deviceName);
                         for (Listener listener : mListeners) {
                             listener.deviceRemoved(mtpDevice);
                         }
+                    } else {
+                        mIgnoredDevices.remove(deviceName);
                     }
                 } else if (ACTION_USB_PERMISSION.equals(action)) {
                     if (mRequestPermissionDevices.contains(deviceName)) {
