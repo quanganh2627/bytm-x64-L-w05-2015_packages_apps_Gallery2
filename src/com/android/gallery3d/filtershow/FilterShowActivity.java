@@ -427,9 +427,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
 
         @Override
         protected Boolean doInBackground(Uri... params) {
-            mImageLoader.loadBitmap(params[0], mBitmapSize);
+            Boolean loadBitmap = mImageLoader.loadBitmap(params[0], mBitmapSize);
+            if (!loadBitmap)
+                return false;
             publishProgress();
-            return mImageLoader.queryLightCycle360();
+            return true;
         }
 
         @Override
@@ -447,9 +449,11 @@ public class FilterShowActivity extends Activity implements OnItemClickListener,
             if (isCancelled()) {
                 return;
             }
-            if (result) {
+            if (mImageLoader.queryLightCycle360()) {
                 mTinyPlanetButton.setVisibility(View.VISIBLE);
             }
+            if (!result)
+                cannotLoadImage();
             mLoadBitmapTask = null;
             super.onPostExecute(result);
         }
