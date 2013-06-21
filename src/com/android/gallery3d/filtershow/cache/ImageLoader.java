@@ -108,18 +108,20 @@ public class ImageLoader {
         return mActivity;
     }
 
-    public void loadBitmap(Uri uri,int size) {
+    public Boolean loadBitmap(Uri uri,int size) {
         mLoadingLock.lock();
         mUri = uri;
         mOrientation = getOrientation(mContext, uri);
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         if (mOriginalBitmapSmall == null) {
             // Couldn't read the bitmap, let's exit
-            mActivity.cannotLoadImage();
+            mLoadingLock.unlock();
+            return false;
         }
         mOriginalBitmapLarge = loadScaledBitmap(uri, size);
         updateBitmaps();
         mLoadingLock.unlock();
+        return true;
     }
 
     public Uri getUri() {
