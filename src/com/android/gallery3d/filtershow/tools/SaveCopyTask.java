@@ -138,13 +138,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     }
 
     private Bitmap loadMutableBitmap() throws FileNotFoundException {
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
-        // exist)
-        options.inMutable = true;
-
-        InputStream is = context.getContentResolver().openInputStream(sourceUri);
-        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
+        Bitmap bitmap = ImageLoader.loadScaledBitmap(context, sourceUri);
         int orientation = ImageLoader.getOrientation(context, sourceUri);
         bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
         return bitmap;
