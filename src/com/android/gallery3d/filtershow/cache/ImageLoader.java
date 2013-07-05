@@ -315,6 +315,68 @@ public class ImageLoader {
         return null;
     }
 
+    public static Bitmap loadScaledBitmap(Context ctx, Uri uri) {
+        InputStream is = null;
+        try {
+            is = ctx.getContentResolver().openInputStream(uri);
+            Log.v(LOGTAG, "loading uri " + uri.getPath() + " input stream: "
+                    + is);
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(is, null, o);
+
+            int width_tmp = o.outWidth;
+            int height_tmp = o.outHeight;
+            int width_org = width_tmp;
+            int height_org = height_tmp;
+
+            int scale = 1;
+            while (true) {
+                if (width_tmp <= MAX_BITMAP_DIM && height_tmp <= MAX_BITMAP_DIM) {
+                    break;
+                }
+                width_tmp /= 2;
+                height_tmp /= 2;
+                scale *= 2;
+            }
+
+            // decode with inSampleSize
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = scale;
+            o2.inMutable = true;
+
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            is = ctx.getContentResolver().openInputStream(uri);
+            Bitmap retBitmap = BitmapFactory.decodeStream(is, null, o2);
+            // We need to resize down if the decoder does not support inSampleSize.
+            // (For example, GIF images.)
+            if(retBitmap != null && (retBitmap.getWidth() == width_org || retBitmap.getHeight() == height_org)) {
+                retBitmap = BitmapUtils.resizeBitmapByScale(retBitmap, 1/(float)scale, true);
+            }
+            return retBitmap;
+        } catch (FileNotFoundException e) {
+            Log.e(LOGTAG, "FileNotFoundException: " + uri);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     public Bitmap getBackgroundBitmap(Resources resources) {
         if (mBackgroundBitmap == null) {
             mBackgroundBitmap = BitmapFactory.decodeResource(resources,
