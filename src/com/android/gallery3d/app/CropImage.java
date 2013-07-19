@@ -616,6 +616,7 @@ public class CropImage extends AbstractGalleryActivity {
             @Override
             public void onFutureDone(Future<Intent> future) {
                 mSaveTask = null;
+                mState = STATE_LOADED;
                 if (future.isCancelled()) return;
                 Intent intent = future.get();
                 if (intent != null) {
@@ -971,8 +972,7 @@ public class CropImage extends AbstractGalleryActivity {
 
         Future<Intent> saveTask = mSaveTask;
         if (saveTask != null && !saveTask.isDone()) {
-            // save in progress, try to cancel it
-            saveTask.cancel();
+            // save in progress, wait until save done
             saveTask.waitDone();
         }
         GLRoot root = getGLRoot();
