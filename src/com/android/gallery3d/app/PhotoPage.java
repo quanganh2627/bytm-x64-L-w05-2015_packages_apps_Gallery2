@@ -1409,7 +1409,7 @@ public abstract class PhotoPage extends ActivityState implements
                     // Account for preview/placeholder being the first item
                     resumeIndex++;
                 }
-                if (resumeIndex < mMediaSet.getMediaItemCount()) {
+                if ((mMediaSet != null) && (resumeIndex < mMediaSet.getMediaItemCount())) {
                     mCurrentIndex = resumeIndex;
                     mModel.moveTo(mCurrentIndex);
                 }
