@@ -394,7 +394,8 @@ public class ImageShow extends View implements OnGestureListener,
             if (updateBounds) {
                 mImageBounds = d;
             }
-            canvas.drawBitmap(image, s, d, mPaint);
+            if (!image.isRecycled())
+                canvas.drawBitmap(image, s, d, mPaint);
         }
     }
 
