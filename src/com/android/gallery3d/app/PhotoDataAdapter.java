@@ -1039,7 +1039,8 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 }
                 if (!info.reloadContent) continue;
                 info.items = mSource.getMediaItem(
-                        info.contentStart, info.contentEnd);
+                        info.contentStart, Math.max(info.contentEnd,
+                        info.contentStart+info.size));
 
                 int index = MediaSet.INDEX_NOT_FOUND;
 
@@ -1079,9 +1080,9 @@ public class PhotoDataAdapter implements PhotoPage.Model {
                 }
 
                 // Don't change index if mSize == 0
-                if (mSize > 0) {
-                    if (index >= mSize) index = mSize - 1;
-                }
+                //if (mSize > 0) {
+                //    if (index >= mSize) index = mSize - 1;
+                //}
 
                 info.indexHint = index;
 
