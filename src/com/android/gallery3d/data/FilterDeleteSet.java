@@ -245,7 +245,8 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
     }
 
     public void clearDeletion() {
-        sendRequest(REQUEST_CLEAR, null /* unused */ , 0 /* unused */);
+        //sendRequest(REQUEST_CLEAR, null /* unused */ , 0 /* unused */);
+        mCurrent.clear();
     }
 
     // Returns number of deletions _in effect_ (the number will only gets
