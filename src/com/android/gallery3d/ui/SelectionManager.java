@@ -109,6 +109,7 @@ public class SelectionManager {
 
     private int getTotalCount() {
         if (mSourceMediaSet == null) return -1;
+        mTotal = -1;
 
         if (mTotal < 0) {
             mTotal = mIsAlbumSet
