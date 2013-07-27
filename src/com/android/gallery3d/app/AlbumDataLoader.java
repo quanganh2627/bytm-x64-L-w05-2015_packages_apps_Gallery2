@@ -307,7 +307,14 @@ public class AlbumDataLoader {
                 int index = i % DATA_CACHE_SIZE;
                 mSetVersion[index] = info.version;
                 MediaItem updateItem = items.get(i - info.reloadStart);
-                long itemVersion = updateItem.getDataVersion();
+                long itemVersion;
+                try {
+                    itemVersion = updateItem.getDataVersion();
+                } catch (NullPointerException ex) {
+                    Log.d(TAG, "The item has been deleted");
+                    continue;
+                }
+
                 if (mItemVersion[index] != itemVersion) {
                     mItemVersion[index] = itemVersion;
                     mData[index] = updateItem;
