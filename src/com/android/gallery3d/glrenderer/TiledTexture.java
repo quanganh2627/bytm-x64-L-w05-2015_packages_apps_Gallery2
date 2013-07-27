@@ -129,18 +129,20 @@ public class TiledTexture implements Texture {
 
         @Override
         protected Bitmap onGetBitmap() {
-            int x = BORDER_SIZE - offsetX;
-            int y = BORDER_SIZE - offsetY;
-            int r = bitmap.getWidth() + x;
-            int b = bitmap.getHeight() + y;
-            sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
-            bitmap = null;
+            if (bitmap != null) {
+                int x = BORDER_SIZE - offsetX;
+                int y = BORDER_SIZE - offsetY;
+                int r = bitmap.getWidth() + x;
+                int b = bitmap.getHeight() + y;
+                sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
+                bitmap = null;
 
-            // draw borders if need
-            if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
-            if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
-            if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
-            if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+                // draw borders if need
+                if (x > 0) sCanvas.drawLine(x - 1, 0, x - 1, TILE_SIZE, sPaint);
+                if (y > 0) sCanvas.drawLine(0, y - 1, TILE_SIZE, y - 1, sPaint);
+                if (r < CONTENT_SIZE) sCanvas.drawLine(r, 0, r, TILE_SIZE, sPaint);
+                if (b < CONTENT_SIZE) sCanvas.drawLine(0, b, TILE_SIZE, b, sPaint);
+            }
 
             return sUploadBitmap;
         }
