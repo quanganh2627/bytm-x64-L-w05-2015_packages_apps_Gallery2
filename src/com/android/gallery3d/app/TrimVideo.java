@@ -189,7 +189,8 @@ public class TrimVideo extends Activity implements
         // If the video position is smaller than the starting point of trimming,
         // correct it.
         if (mVideoPosition < mTrimStartTime) {
-            mVideoView.seekTo(mTrimStartTime);
+            // Comment below line as this seek behavior has confilt with framework
+            // mVideoView.seekTo(mTrimStartTime);
             mVideoPosition = mTrimStartTime;
         }
         // If the position is bigger than the end point of trimming, show the
