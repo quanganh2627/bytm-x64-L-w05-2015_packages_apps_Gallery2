@@ -182,7 +182,11 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public int getSupportedOperations() {
-        return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM | SUPPORT_MUTE;
+        if (mimeType.equals("video/mpeg4") || mimeType.equals("video/mp4")) {
+            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM | SUPPORT_MUTE;
+        } else {
+            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_MUTE;
+        }
     }
 
     @Override
