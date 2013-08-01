@@ -439,6 +439,10 @@ public class AlbumSetPage extends ActivityState implements
     public void onPause() {
         super.onPause();
         mIsActive = false;
+
+        if (mSelectionManager.inSelectionMode()) {
+            mSelectionManager.leaveSelectionMode();
+        }
         mActionModeHandler.pause();
         mAlbumSetDataAdapter.pause();
         mAlbumSetView.pause();
