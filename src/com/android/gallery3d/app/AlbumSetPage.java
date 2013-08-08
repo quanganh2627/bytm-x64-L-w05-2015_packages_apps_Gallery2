@@ -200,8 +200,7 @@ public class AlbumSetPage extends ActivityState implements
             // Show pressed-up animation for the single-tap.
             mAlbumSetView.setPressedIndex(slotIndex);
             mAlbumSetView.setPressedUp();
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_ALBUM, slotIndex, 0),
-                    FadeTexture.DURATION);
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_PICK_ALBUM, slotIndex, 0));
         }
     }
 
