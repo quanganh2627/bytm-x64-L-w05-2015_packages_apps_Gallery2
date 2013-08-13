@@ -46,4 +46,8 @@ LOCAL_SRC_FILES := filters/gradient.c \
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
 
+ifeq ($(TARGET_ARCH),x86)
+LOCAL_CFLAGS    += -funsigned-char
+endif
+
 include $(BUILD_SHARED_LIBRARY)
