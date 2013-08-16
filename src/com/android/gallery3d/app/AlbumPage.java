@@ -259,8 +259,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
             mAlbumView.setPressedUp();
-            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
-                    FadeTexture.DURATION);
+            mHandler.sendMessage(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0));
         }
     }
 

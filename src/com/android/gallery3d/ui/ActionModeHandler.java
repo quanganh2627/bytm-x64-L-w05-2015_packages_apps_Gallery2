@@ -212,8 +212,6 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         String format = mActivity.getResources().getQuantityString(
                 R.plurals.number_of_items_selected, count);
         setTitle(String.format(format, count));
-        if (count == 0)
-           MenuExecutor.updateMenuOperation(mMenu, MediaObject.SUPPORT_NONE);
 
         // For clients who call SelectionManager.selectAll() directly, we need to ensure the
         // menu status is consistent with selection manager.
@@ -395,6 +393,8 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
     public void updateSupportedOperation() {
         // Interrupt previous unfinished task, mMenuTask is only accessed in main thread
         if (mMenuTask != null) mMenuTask.cancel();
+
+        MenuExecutor.updateMenuOperation(mMenu, MediaObject.SUPPORT_NONE);
 
         updateSelectionMenu();
 

@@ -128,6 +128,11 @@ public class TrimVideo extends Activity implements
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
 
+        if (savedInstanceState != null) { // this is a resumed activity
+            mVideoPosition = savedInstanceState.getInt(KEY_VIDEO_POSITION, 0);
+            mHasPaused = true;
+        }
+
         playVideo();
     }
 
@@ -140,7 +145,6 @@ public class TrimVideo extends Activity implements
             mHasPaused = false;
         }
         mHandler.post(mProgressChecker);
-        mVideoView.seekTo(mTrimStartTime);
     }
 
     @Override
