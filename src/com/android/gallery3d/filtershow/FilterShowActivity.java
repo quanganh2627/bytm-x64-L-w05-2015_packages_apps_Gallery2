@@ -357,19 +357,15 @@ public class FilterShowActivity extends FragmentActivity implements OnItemClickL
         Vector<FilterRepresentation> borders = new Vector<FilterRepresentation>();
 
         // The "no border" implementation
-        borders.add(new FilterImageBorderRepresentation(0));
+        FilterImageBorderRepresentation nullBorder =
+                new FilterImageBorderRepresentation(0, null);
+        nullBorder.setName(getString(R.string.none));
 
         // Google-build borders
         FiltersManager.getManager().addBorders(this, borders);
 
-        for (int i = 0; i < borders.size(); i++) {
-            FilterRepresentation filter = borders.elementAt(i);
-            if (i == 0) {
-                filter.setName(getString(R.string.none));
-            }
-        }
-
         mCategoryBordersAdapter = new CategoryAdapter(this);
+        mCategoryBordersAdapter.add(new Action(this, nullBorder, Action.FULL_VIEW));
         for (FilterRepresentation representation : borders) {
             if (representation.getTextId() != 0) {
                 representation.setName(getString(representation.getTextId()));

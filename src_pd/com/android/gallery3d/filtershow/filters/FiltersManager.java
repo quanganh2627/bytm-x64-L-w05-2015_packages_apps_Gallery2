@@ -17,6 +17,7 @@
 package com.android.gallery3d.filtershow.filters;
 
 import android.content.Context;
+import android.view.ContextThemeWrapper;
 import android.content.res.Resources;
 import android.graphics.Color;
 
@@ -51,14 +52,15 @@ public class FiltersManager extends BaseFiltersManager {
     @Override
     public void addBorders(Context context, Vector<FilterRepresentation> representations) {
         // Regular borders
-        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5));
+        Resources rsc = ((ContextThemeWrapper)context).getResources();
+        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_4x5, rsc));
         representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush));
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_brush, rsc));
         representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge));
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_grunge, rsc));
         representations.add(
-                new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e));
-        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape));
+                new FilterImageBorderRepresentation(R.drawable.filtershow_border_sumi_e, rsc));
+        representations.add(new FilterImageBorderRepresentation(R.drawable.filtershow_border_tape, rsc));
         representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize, 0));
         representations.add(new FilterColorBorderRepresentation(Color.BLACK, mImageBorderSize,
                 mImageBorderSize));

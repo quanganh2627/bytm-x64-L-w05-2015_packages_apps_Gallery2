@@ -83,7 +83,7 @@ public class ImageFilterBorder extends ImageFilter {
     public Drawable getDrawable(int rsc) {
         Drawable drawable = mDrawables.get(rsc);
         if (drawable == null && mResources != null && rsc != 0) {
-            drawable = new BitmapDrawable(mResources, BitmapFactory.decodeResource(mResources, rsc));
+            drawable = getParameters().getRepresentationDrawable();
             mDrawables.put(rsc, drawable);
         }
         return drawable;
