@@ -134,6 +134,8 @@ public class TiledTexture implements Texture {
                 int y = BORDER_SIZE - offsetY;
                 int r = bitmap.getWidth() + x;
                 int b = bitmap.getHeight() + y;
+                if (sCanvas == null)
+                    return null;
                 sCanvas.drawBitmap(bitmap, x, y, sBitmapPaint);
                 bitmap = null;
 
