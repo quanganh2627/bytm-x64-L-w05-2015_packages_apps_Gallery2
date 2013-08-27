@@ -28,9 +28,6 @@ import com.android.gallery3d.R;
 import com.android.gallery3d.app.GalleryApp;
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.data.ContentListener;
-import com.android.gallery3d.data.DataManager;
-import com.android.gallery3d.data.MediaSet;
-import com.android.gallery3d.data.Path;
 
 @TargetApi(ApiHelper.VERSION_CODES.HONEYCOMB)
 public class WidgetService extends RemoteViewsService {
@@ -50,33 +47,6 @@ public class WidgetService extends RemoteViewsService {
 
         return new PhotoRVFactory((GalleryApp) getApplicationContext(),
                 id, type, albumPath);
-    }
-
-    private static class EmptySource implements WidgetSource {
-
-        @Override
-        public int size() {
-            return 0;
-        }
-
-        @Override
-        public Bitmap getImage(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public Uri getContentUri(int index) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void setContentListener(ContentListener listener) {}
-
-        @Override
-        public void reload() {}
-
-        @Override
-        public void close() {}
     }
 
     private static class PhotoRVFactory implements
@@ -99,12 +69,7 @@ public class WidgetService extends RemoteViewsService {
         @Override
         public void onCreate() {
             if (mType == WidgetDatabaseHelper.TYPE_ALBUM) {
-                Path path = Path.fromString(mAlbumPath);
-                DataManager manager = mApp.getDataManager();
-                MediaSet mediaSet = (MediaSet) manager.getMediaObject(path);
-                mSource = mediaSet == null
-                        ? new EmptySource()
-                        : new MediaSetSource(mediaSet);
+                mSource = new MediaSetSource(mApp.getDataManager(), mAlbumPath);
             } else {
                 mSource = new LocalPhotoSource(mApp.getAndroidContext());
             }
@@ -116,8 +81,10 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onDestroy() {
-            mSource.close();
-            mSource = null;
+           synchronized (mSource) {
+                mSource.close();
+                mSource = null;
+            }
         }
 
         @Override
@@ -151,16 +118,19 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public RemoteViews getViewAt(int position) {
-            Bitmap bitmap = mSource.getImage(position);
-            if (bitmap == null) return getLoadingView();
-            RemoteViews views = new RemoteViews(
-                    mApp.getAndroidContext().getPackageName(),
-                    R.layout.appwidget_photo_item);
-            views.setImageViewBitmap(R.id.appwidget_photo_item, bitmap);
-            views.setOnClickFillInIntent(R.id.appwidget_photo_item, new Intent()
-                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    .setData(mSource.getContentUri(position)));
-            return views;
+           synchronized (mSource) {
+                if (mSource == null) return null;
+                Bitmap bitmap = mSource.getImage(position);
+                if (bitmap == null) return getLoadingView();
+                RemoteViews views = new RemoteViews(
+                        mApp.getAndroidContext().getPackageName(),
+                        R.layout.appwidget_photo_item);
+                views.setImageViewBitmap(R.id.appwidget_photo_item, bitmap);
+                views.setOnClickFillInIntent(R.id.appwidget_photo_item, new Intent()
+                       .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                       .setData(mSource.getContentUri(position)));
+                return views;
+            }
         }
 
         @Override
