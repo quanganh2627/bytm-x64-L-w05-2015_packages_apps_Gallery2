@@ -67,6 +67,8 @@ public class MoviePlayer implements
     private static final String CMDNAME = "command";
     private static final String CMDPAUSE = "pause";
 
+    private static final long BLACK_TIMEOUT = 500;
+
     // If we resume the acitivty with in RESUMEABLE_TIMEOUT, we will keep playing.
     // Otherwise, we pause the player.
     private static final long RESUMEABLE_TIMEOUT = 3 * 60 * 1000; // 3 mins
@@ -102,13 +104,6 @@ public class MoviePlayer implements
         }
     };
 
-    private final Runnable mRemoveBackground = new Runnable() {
-        @Override
-        public void run() {
-            mRootView.setBackground(null);
-        }
-    };
-
     private final Runnable mProgressChecker = new Runnable() {
         @Override
         public void run() {
@@ -140,6 +135,18 @@ public class MoviePlayer implements
                 return true;
             }
         });
+
+        // The SurfaceView is transparent before drawing the first frame.
+        // This makes the UI flashing when open a video. (black -> old screen
+        // -> video) However, we have no way to know the timing of the first
+        // frame. So, we hide the VideoView for a while to make sure the
+        // video has been drawn on it.
+        mVideoView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mVideoView.setVisibility(View.VISIBLE);
+            }
+        }, BLACK_TIMEOUT);
 
         setOnSystemUiVisibilityChangeListener();
         // Hide system UI by default
@@ -184,19 +191,7 @@ public class MoviePlayer implements
                 if ((diff & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
                         && (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                     mController.show();
-
-                    // We need to set the background to clear ghosting images
-                    // when ActionBar slides in. However, if we keep the background,
-                    // there will be one additional layer in HW composer, which is bad
-                    // to battery. As a solution, we remove the background when we
-                    // hide the action bar
-                    mHandler.removeCallbacks(mRemoveBackground);
                     mRootView.setBackgroundColor(Color.BLACK);
-                } else {
-                    mHandler.removeCallbacks(mRemoveBackground);
-
-                    // Wait for the slide out animation, one second should be enough
-                    mHandler.postDelayed(mRemoveBackground, 1000);
                 }
             }
         });

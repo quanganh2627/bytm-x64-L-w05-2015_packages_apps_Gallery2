@@ -24,7 +24,6 @@ public abstract class MediaObject {
     public static final long INVALID_DATA_VERSION = -1;
 
     // These are the bits returned from getSupportedOperations():
-    public static final int SUPPORT_NONE = 0;
     public static final int SUPPORT_DELETE = 1 << 0;
     public static final int SUPPORT_ROTATE = 1 << 1;
     public static final int SUPPORT_SHARE = 1 << 2;

@@ -259,7 +259,8 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             // Render transition in pressed state
             mAlbumView.setPressedIndex(slotIndex);
             mAlbumView.setPressedUp();
-            mHandler.sendMessage(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0));
+            mHandler.sendMessageDelayed(mHandler.obtainMessage(MSG_PICK_PHOTO, slotIndex, 0),
+                    FadeTexture.DURATION);
         }
     }
 
@@ -275,13 +276,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mActivity.getGLRoot().setLightsOutMode(true);
         }
 
-        MediaItem item;
-        try {
-            item = mAlbumDataAdapter.get(slotIndex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "The item is already deleted, ignore the click");
-            return;
-        }
+        MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) return; // Item not ready yet, ignore the click
         if (mGetContent) {
             onGetContent(item);

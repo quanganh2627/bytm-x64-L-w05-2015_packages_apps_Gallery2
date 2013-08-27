@@ -77,8 +77,6 @@ public class MtpDeviceSet extends MediaSet
                     MtpDevice device = (MtpDevice) dataManager.peekMediaObject(childPath);
                     if (device == null) {
                         device = new MtpDevice(childPath, mApplication, deviceId, mMtpContext);
-                    } else {
-                        device.reloadDeviceName();
                     }
                     Log.d(TAG, "add device " + device);
                     result.add(device);

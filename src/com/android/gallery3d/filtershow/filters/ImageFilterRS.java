@@ -75,10 +75,4 @@ public class ImageFilterRS extends ImageFilter {
         mResources = context.getResources();
     }
 
-    public static void clearRenderScriptContext() {
-        if (mRS != null) {
-            mRS.destroy();
-            mRS = null;
-        }
-    }
 }

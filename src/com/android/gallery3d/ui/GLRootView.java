@@ -226,14 +226,12 @@ public class GLRootView extends GLSurfaceView
         int compensation = 0;
 
         // Get the new orientation values
-        synchronized(GLRootView.this) {
-            if (mOrientationSource != null) {
-                displayRotation = mOrientationSource.getDisplayRotation();
-                compensation = mOrientationSource.getCompensation();
-            } else {
-                displayRotation = 0;
-                compensation = 0;
-            }
+        if (mOrientationSource != null) {
+            displayRotation = mOrientationSource.getDisplayRotation();
+            compensation = mOrientationSource.getCompensation();
+        } else {
+            displayRotation = 0;
+            compensation = 0;
         }
 
         if (mCompensation != compensation) {
@@ -535,9 +533,7 @@ public class GLRootView extends GLSurfaceView
 
     @Override
     public void setOrientationSource(OrientationSource source) {
-        synchronized(GLRootView.this) {
-            mOrientationSource = source;
-        }
+        mOrientationSource = source;
     }
 
     @Override

@@ -483,8 +483,7 @@ public class ImageShow extends View implements OnGestureListener,
             Rect d = new Rect((int) tx, (int) ty, (int) (w + tx),
                     (int) (h + ty));
             mImageBounds = d;
-            if (!image.isRecycled())
-                canvas.drawBitmap(image, s, d, mPaint);
+            canvas.drawBitmap(image, s, d, mPaint);
         }
     }
 

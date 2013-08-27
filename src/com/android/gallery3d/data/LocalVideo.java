@@ -180,11 +180,7 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public int getSupportedOperations() {
-        if (mimeType.equals("video/mpeg4") || mimeType.equals("video/mp4") || mimeType.equals("video/3gp") || mimeType.equals("video/3gpp") || mimeType.equals("video/3gpp2")) {
-            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM;
-        } else {
-            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO;
-        }
+        return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM;
     }
 
     @Override

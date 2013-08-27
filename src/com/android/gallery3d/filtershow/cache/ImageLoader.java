@@ -43,7 +43,6 @@ import com.android.gallery3d.filtershow.imageshow.ImageShow;
 import com.android.gallery3d.filtershow.presets.ImagePreset;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.XmpUtilHelper;
-import com.android.gallery3d.common.BitmapUtils;
 
 import java.io.Closeable;
 import java.io.File;
@@ -94,12 +93,6 @@ public class ImageLoader {
         mHiresCache = new DelayedPresetCache(this, 3);
     }
 
-
-    public void quitThread() {
-        ((DelayedPresetCache)mCache).quitThread();
-        ((DelayedPresetCache)mHiresCache).quitThread();
-    }
-
     public static int getZoomOrientation() {
         return mZoomOrientation;
     }
@@ -108,20 +101,18 @@ public class ImageLoader {
         return mActivity;
     }
 
-    public Boolean loadBitmap(Uri uri,int size) {
+    public void loadBitmap(Uri uri,int size) {
         mLoadingLock.lock();
         mUri = uri;
         mOrientation = getOrientation(mContext, uri);
         mOriginalBitmapSmall = loadScaledBitmap(uri, 160);
         if (mOriginalBitmapSmall == null) {
             // Couldn't read the bitmap, let's exit
-            mLoadingLock.unlock();
-            return false;
+            mActivity.cannotLoadImage();
         }
         mOriginalBitmapLarge = loadScaledBitmap(uri, size);
         updateBitmaps();
         mLoadingLock.unlock();
-        return true;
     }
 
     public Uri getUri() {
@@ -274,8 +265,6 @@ public class ImageLoader {
 
             int width_tmp = o.outWidth;
             int height_tmp = o.outHeight;
-            int width_org = width_tmp;
-            int height_org = height_tmp;
 
             mOriginalBounds = new Rect(0, 0, width_tmp, height_tmp);
 
@@ -297,82 +286,13 @@ public class ImageLoader {
 
             closeStream(is);
             is = mContext.getContentResolver().openInputStream(uri);
-            Bitmap retBitmap = BitmapFactory.decodeStream(is, null, o2);
-
-            // We need to resize down if the decoder does not support inSampleSize.
-            // (For example, GIF/WBMP images.)
-            if(retBitmap != null && (retBitmap.getWidth() == width_org && retBitmap.getHeight() == height_org)) {
-                retBitmap = BitmapUtils.resizeBitmapByScale(retBitmap, 1/(float)scale, true);
-            }
-            return retBitmap;
+            return BitmapFactory.decodeStream(is, null, o2);
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             closeStream(is);
-        }
-        return null;
-    }
-
-    public static Bitmap loadScaledBitmap(Context ctx, Uri uri) {
-        InputStream is = null;
-        try {
-            is = ctx.getContentResolver().openInputStream(uri);
-            Log.v(LOGTAG, "loading uri " + uri.getPath() + " input stream: "
-                    + is);
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(is, null, o);
-
-            int width_tmp = o.outWidth;
-            int height_tmp = o.outHeight;
-            int width_org = width_tmp;
-            int height_org = height_tmp;
-
-            int scale = 1;
-            while (true) {
-                if (width_tmp <= MAX_BITMAP_DIM && height_tmp <= MAX_BITMAP_DIM) {
-                    break;
-                }
-                width_tmp /= 2;
-                height_tmp /= 2;
-                scale *= 2;
-            }
-
-            // decode with inSampleSize
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = scale;
-            o2.inMutable = true;
-
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            is = ctx.getContentResolver().openInputStream(uri);
-            Bitmap retBitmap = BitmapFactory.decodeStream(is, null, o2);
-            // We need to resize down if the decoder does not support inSampleSize.
-            // (For example, GIF images.)
-            if(retBitmap != null && (retBitmap.getWidth() == width_org || retBitmap.getHeight() == height_org)) {
-                retBitmap = BitmapUtils.resizeBitmapByScale(retBitmap, 1/(float)scale, true);
-            }
-            return retBitmap;
-        } catch (FileNotFoundException e) {
-            Log.e(LOGTAG, "FileNotFoundException: " + uri);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         return null;
     }

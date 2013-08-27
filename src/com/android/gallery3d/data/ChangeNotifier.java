@@ -50,7 +50,8 @@ public class ChangeNotifier {
     }
 
     protected void onChange(boolean selfChange) {
-        mContentDirty.set(true);
-        mMediaSet.notifyContentChanged();
+        if (mContentDirty.compareAndSet(false, true)) {
+            mMediaSet.notifyContentChanged();
+        }
     }
 }

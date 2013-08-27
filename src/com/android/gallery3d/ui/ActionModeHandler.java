@@ -394,8 +394,6 @@ public class ActionModeHandler implements Callback, PopupList.OnPopupItemClickLi
         // Interrupt previous unfinished task, mMenuTask is only accessed in main thread
         if (mMenuTask != null) mMenuTask.cancel();
 
-        MenuExecutor.updateMenuOperation(mMenu, MediaObject.SUPPORT_NONE);
-
         updateSelectionMenu();
 
         // Disable share actions until share intent is in good shape

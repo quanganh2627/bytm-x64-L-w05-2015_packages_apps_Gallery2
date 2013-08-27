@@ -63,10 +63,6 @@ public class DelayedPresetCache extends DirectPresetCache implements Callback {
         mProcessingHandler = new Handler(mHandlerThread.getLooper(), this);
     }
 
-    public void quitThread() {
-        mHandlerThread.quit();
-    }
-
     @Override
     protected void willCompute(CachedPreset cache) {
         if (cache == null) {

@@ -38,9 +38,6 @@ import android.view.Window;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
-import android.view.Display;
-import android.content.pm.ActivityInfo;
-import android.hardware.display.DisplayManager;
 
 import com.android.gallery3d.R;
 import com.android.gallery3d.util.BucketNames;
@@ -104,13 +101,6 @@ public class TrimVideo extends Activity implements
             }
         });
 
-        // Detect the display devices. If the external device is connected,
-        // set the screen orientation to landscape
-        DisplayManager displayService = (DisplayManager) mContext.getSystemService(Context.DISPLAY_SERVICE);
-        Display[] displays = displayService.getDisplays(DisplayManager.DISPLAY_CATEGORY_PRESENTATION);
-        if (displays.length > 0)
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-
         Intent intent = getIntent();
         mUri = intent.getData();
         mSrcVideoPath = intent.getStringExtra(PhotoPage.KEY_MEDIA_ITEM_PATH);
@@ -127,11 +117,6 @@ public class TrimVideo extends Activity implements
         mVideoView.setOnErrorListener(this);
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
-
-        if (savedInstanceState != null) { // this is a resumed activity
-            mVideoPosition = savedInstanceState.getInt(KEY_VIDEO_POSITION, 0);
-            mHasPaused = true;
-        }
 
         playVideo();
     }
@@ -203,8 +188,7 @@ public class TrimVideo extends Activity implements
         // If the video position is smaller than the starting point of trimming,
         // correct it.
         if (mVideoPosition < mTrimStartTime) {
-            // Comment below line as this seek behavior has confilt with framework
-            // mVideoView.seekTo(mTrimStartTime);
+            mVideoView.seekTo(mTrimStartTime);
             mVideoPosition = mTrimStartTime;
         }
         // If the position is bigger than the end point of trimming, show the

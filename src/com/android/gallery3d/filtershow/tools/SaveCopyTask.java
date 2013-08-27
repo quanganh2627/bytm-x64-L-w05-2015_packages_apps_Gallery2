@@ -138,7 +138,13 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
     }
 
     private Bitmap loadMutableBitmap() throws FileNotFoundException {
-        Bitmap bitmap = ImageLoader.loadScaledBitmap(context, sourceUri);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        // TODO: on <3.x we need a copy of the bitmap (inMutable doesn't
+        // exist)
+        options.inMutable = true;
+
+        InputStream is = context.getContentResolver().openInputStream(sourceUri);
+        Bitmap bitmap = BitmapFactory.decodeStream(is, null, options);
         int orientation = ImageLoader.getOrientation(context, sourceUri);
         bitmap = ImageLoader.rotateToPortrait(bitmap, orientation);
         return bitmap;
@@ -222,16 +228,7 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
         ImagePreset preset = params[0];
 
         try {
-//            Bitmap bitmap = preset.apply(loadMutableBitmap());
-            Bitmap bitmap = loadMutableBitmap();
-            //Ensure bitmap in 8888 format, good for editing as well as GL compatible.
-            if ((bitmap != null) && (bitmap.getConfig() != Bitmap.Config.ARGB_8888)) {
-                Bitmap copy = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-                bitmap.recycle();
-                bitmap = copy;
-            }
-            if (bitmap != null)
-                bitmap = preset.apply(bitmap);
+            Bitmap bitmap = preset.apply(loadMutableBitmap());
 
             Object xmp = null;
             InputStream is = null;
@@ -239,13 +236,11 @@ public class SaveCopyTask extends AsyncTask<ImagePreset, Void, Uri> {
                 is = context.getContentResolver().openInputStream(sourceUri);
                 xmp =  XmpUtilHelper.extractXMPMeta(is);
             }
-            if (bitmap != null)
-                saveBitmap(bitmap, this.destinationFile, xmp);
+            saveBitmap(bitmap, this.destinationFile, xmp);
             copyExif(sourceUri, destinationFile.getAbsolutePath());
 
             Uri uri = insertContent(context, sourceUri, this.destinationFile, saveFileName);
-            if (bitmap != null)
-                bitmap.recycle();
+            bitmap.recycle();
             return uri;
 
         } catch (FileNotFoundException ex) {
