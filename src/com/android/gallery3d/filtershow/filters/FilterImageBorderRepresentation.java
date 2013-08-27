@@ -31,7 +31,8 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
     public FilterImageBorderRepresentation(int drawableResource, Resources rsc) {
         super("ImageBorder");
         mDrawableResource = drawableResource;
-        mDrawable = new BitmapDrawable(rsc, BitmapFactory.decodeResource(rsc, mDrawableResource));
+        if (rsc != null && drawableResource != 0)
+            mDrawable = new BitmapDrawable(rsc, BitmapFactory.decodeResource(rsc, mDrawableResource));
         setFilterClass(ImageFilterBorder.class);
         setPriority(FilterRepresentation.TYPE_BORDER);
         setTextId(R.string.none);
