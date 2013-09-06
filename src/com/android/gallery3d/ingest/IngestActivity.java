@@ -449,6 +449,8 @@ public class IngestActivity extends Activity implements
     }
 
     private ProgressDialog getProgressDialog() {
+        if (mActive == false)
+            return null;
         if (mProgressDialog == null || !mProgressDialog.isShowing()) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
