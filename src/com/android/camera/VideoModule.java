@@ -607,7 +607,7 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onShutterButtonClick() {
-        if (mUI.collapseCameraControls() || mSwitchingCamera) return;
+        if (mUI.collapseCameraControls() || mSwitchingCamera || mActivity.mCameraDevice == null) return;
 
         boolean stop = mMediaRecorderRecording;
 
