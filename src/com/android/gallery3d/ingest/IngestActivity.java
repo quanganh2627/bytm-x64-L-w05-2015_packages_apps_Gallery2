@@ -460,6 +460,8 @@ public class IngestActivity extends Activity implements
 
     private void updateProgressDialog() {
         ProgressDialog dialog = getProgressDialog();
+        if (dialog == null)
+            return;
         boolean indeterminate = (mProgressState.max == 0);
         dialog.setIndeterminate(indeterminate);
         dialog.setProgressStyle(indeterminate ? ProgressDialog.STYLE_SPINNER
