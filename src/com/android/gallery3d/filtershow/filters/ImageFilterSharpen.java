@@ -100,7 +100,6 @@ public class ImageFilterSharpen extends ImageFilterRS {
         }
         computeKernel();
         mScript.set_gIn(getInPixelsAllocation());
-        mScript.bind_gPixels(getInPixelsAllocation());
         mScript.forEach_root(getInPixelsAllocation(), getOutPixelsAllocation());
     }
 
