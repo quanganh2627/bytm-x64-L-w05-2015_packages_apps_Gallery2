@@ -344,6 +344,8 @@ public class ImageLoader {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
         } catch (Exception e) {
             e.printStackTrace();
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
         } finally {
             Utils.closeSilently(is);
         }
