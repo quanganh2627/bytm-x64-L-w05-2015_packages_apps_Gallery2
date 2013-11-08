@@ -62,7 +62,7 @@ public class CameraHolder {
     private static CameraInfo mMockCameraInfo[];
 
     /* Debug double-open issue */
-    private static final boolean DEBUG_OPEN_RELEASE = true;
+    private static final boolean DEBUG_OPEN_RELEASE = false;
     private static class OpenReleaseState {
         long time;
         int id;
@@ -196,8 +196,12 @@ public class CameraHolder {
                 Log.e(TAG, "double open");
                 dumpStates();
             }
+            Assert(!mCameraOpened);
         }
-        Assert(!mCameraOpened);
+        // Debug in case DEBUG_OPEN_RELEASE == false:
+        if (mCameraOpened) {
+            Log.e(TAG, "double open camera devices");
+        }
         if (mCameraDevice != null && mCameraId != cameraId) {
             mCameraDevice.release();
             mCameraDevice = null;
