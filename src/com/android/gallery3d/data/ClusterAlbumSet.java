@@ -132,8 +132,7 @@ public class ClusterAlbumSet extends MediaSet implements ContentListener {
         mBaseSet.enumerateTotalMediaItems(new MediaSet.ItemConsumer() {
             @Override
             public void consume(int index, MediaItem item) {
-                if (item != null)
-                    existing.add(item.getPath());
+                existing.add(item.getPath());
             }
         });
 

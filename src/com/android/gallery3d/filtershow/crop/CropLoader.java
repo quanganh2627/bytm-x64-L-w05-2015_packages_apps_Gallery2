@@ -51,7 +51,6 @@ public abstract class CropLoader {
 
     private static final String TIME_STAMP_NAME = "'IMG'_yyyyMMdd_HHmmss";
     public static final String DEFAULT_SAVE_DIRECTORY = "EditedOnlinePhotos";
-    private static final String FILE_EXTENSION_JPEG = "jpg";
 
     /**
      * Returns the orientation of image at the given URI as one of 0, 90, 180,
@@ -66,16 +65,10 @@ public abstract class CropLoader {
             throw new IllegalArgumentException("bad argument to getScaledBitmap");
         }
         if (ContentResolver.SCHEME_FILE.equals(uri.getScheme())) {
-            String fileName = uri.getLastPathSegment();
-
-            if (fileName == null || fileName.isEmpty()) return 0;
-
-            String[] fileNameParts = fileName.split("\\.");
-            if (fileNameParts == null || fileNameParts.length == 0) return 0;
-
-            String extension = fileNameParts[fileNameParts.length - 1];
-            if (extension == null || !extension.toLowerCase().equals(FILE_EXTENSION_JPEG)) return 0;
-
+            String mimeType = context.getContentResolver().getType(uri);
+            if (mimeType != JPEG_MIME_TYPE) {
+                return 0;
+            }
             String path = uri.getPath();
             int orientation = 0;
             ExifInterface exif = new ExifInterface();

@@ -277,13 +277,7 @@ public class AlbumPage extends ActivityState implements GalleryActionBar.Cluster
             mActivity.getGLRoot().setLightsOutMode(true);
         }
 
-        MediaItem item;
-        try {
-            item = mAlbumDataAdapter.get(slotIndex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "The item is already deleted, ignore the click");
-            return;
-        }
+        MediaItem item = mAlbumDataAdapter.get(slotIndex);
         if (item == null) return; // Item not ready yet, ignore the click
         if (mGetContent) {
             onGetContent(item);

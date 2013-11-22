@@ -114,35 +114,31 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
         if (count <= 0) return new ArrayList<MediaItem>();
 
         int end = start + count - 1;
-
-        synchronized(this) {
-            int n = mCurrent.size();
-            // Find the segment that "start" falls into. Count the number of items
-            // not yet deleted until it reaches "start".
-
-            int i = 0;
-            for (i = 0; i < n; i++) {
-                Deletion d = mCurrent.get(i);
-                if (d.index - i > start) break;
-            }
-            // Find the segment that "end" falls into.
-            int j = i;
-            for (; j < n; j++) {
-                Deletion d = mCurrent.get(j);
-                if (d.index - j > end) break;
-            }
-
-            // Now get enough to cover deleted items in [start, end]
-            ArrayList<MediaItem> base = mBaseSet.getMediaItem(start + i, count + (j - i));
-
-            // Remove the deleted items.
-            for (int m = j - 1; m >= i; m--) {
-                Deletion d = mCurrent.get(m);
-                int k = d.index - (start + i);
-                base.remove(k);
-            }
-            return base;
+        int n = mCurrent.size();
+        // Find the segment that "start" falls into. Count the number of items
+        // not yet deleted until it reaches "start".
+        int i = 0;
+        for (i = 0; i < n; i++) {
+            Deletion d = mCurrent.get(i);
+            if (d.index - i > start) break;
         }
+        // Find the segment that "end" falls into.
+        int j = i;
+        for (; j < n; j++) {
+            Deletion d = mCurrent.get(j);
+            if (d.index - j > end) break;
+        }
+
+        // Now get enough to cover deleted items in [start, end]
+        ArrayList<MediaItem> base = mBaseSet.getMediaItem(start + i, count + (j - i));
+
+        // Remove the deleted items.
+        for (int m = j - 1; m >= i; m--) {
+            Deletion d = mCurrent.get(m);
+            int k = d.index - (start + i);
+            base.remove(k);
+        }
+        return base;
     }
 
     // We apply the pending requests in the mRequests to construct mCurrent in reload().
@@ -170,21 +166,17 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
                     }
                     case REQUEST_REMOVE: {
                         // Remove the path from mCurrent.
-                        synchronized(this) {
-                            int n = mCurrent.size();
-                            for (int j = 0; j < n; j++) {
-                                if (mCurrent.get(j).path == r.path) {
-                                    mCurrent.remove(j);
-                                    break;
-                                }
+                        int n = mCurrent.size();
+                        for (int j = 0; j < n; j++) {
+                            if (mCurrent.get(j).path == r.path) {
+                                mCurrent.remove(j);
+                                break;
                             }
                         }
                         break;
                     }
                     case REQUEST_CLEAR: {
-                        synchronized(this) {
-                            mCurrent.clear();
-                        }
+                        mCurrent.clear();
                         break;
                     }
                 }
@@ -214,16 +206,13 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
                 if (item == null) continue;
                 Path p = item.getPath();
                 // Find the matching path in mCurrent, if found move it to result
-
-                synchronized(this) {
-                    for (int j = 0; j < mCurrent.size(); j++) {
-                        Deletion d = mCurrent.get(j);
-                        if (d.path == p) {
-                            d.index = from + i;
-                            result.add(d);
-                            mCurrent.remove(j);
-                            break;
-                        }
+                for (int j = 0; j < mCurrent.size(); j++) {
+                    Deletion d = mCurrent.get(j);
+                    if (d.path == p) {
+                        d.index = from + i;
+                        result.add(d);
+                        mCurrent.remove(j);
+                        break;
                     }
                 }
             }
@@ -256,10 +245,7 @@ public class FilterDeleteSet extends MediaSet implements ContentListener {
     }
 
     public void clearDeletion() {
-        //sendRequest(REQUEST_CLEAR, null /* unused */ , 0 /* unused */);
-        synchronized(this) {
-            mCurrent.clear();
-        }
+        sendRequest(REQUEST_CLEAR, null /* unused */ , 0 /* unused */);
     }
 
     // Returns number of deletions _in effect_ (the number will only gets

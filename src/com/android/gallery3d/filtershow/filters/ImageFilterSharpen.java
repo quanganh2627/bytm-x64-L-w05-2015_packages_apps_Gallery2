@@ -36,7 +36,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
         representation.setTextId(R.string.sharpness);
         representation.setButtonId(R.id.sharpenButton);
         representation.setOverlayId(R.drawable.filtershow_button_colors_sharpen);
-        representation.setEditorId(R.id.imageZoom);
+        representation.setEditorId(R.id.imageShow);
         representation.setSupportsPartialRendering(true);
         return representation;
     }
@@ -100,6 +100,7 @@ public class ImageFilterSharpen extends ImageFilterRS {
         }
         computeKernel();
         mScript.set_gIn(getInPixelsAllocation());
+        mScript.bind_gPixels(getInPixelsAllocation());
         mScript.forEach_root(getInPixelsAllocation(), getOutPixelsAllocation());
     }
 

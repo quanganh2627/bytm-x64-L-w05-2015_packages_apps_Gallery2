@@ -48,7 +48,6 @@ import com.android.gallery3d.filtershow.tools.BitmapTask;
 import com.android.gallery3d.filtershow.tools.SaveCopyTask;
 import com.android.gallery3d.util.InterruptableOutputStream;
 import com.android.gallery3d.util.XmpUtilHelper;
-import com.android.gallery3d.common.BitmapUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.Closeable;
@@ -303,8 +302,6 @@ public class ImageLoader {
 
             int width_tmp = o.outWidth;
             int height_tmp = o.outHeight;
-            int width_org = width_tmp;
-            int height_org = height_tmp;
 
             mOriginalBounds = new Rect(0, 0, width_tmp, height_tmp);
 
@@ -332,19 +329,10 @@ public class ImageLoader {
 
             Utils.closeSilently(is);
             is = mContext.getContentResolver().openInputStream(uri);
-            Bitmap retBitmap = BitmapFactory.decodeStream(is, null, o2);
-
-            // We need to resize down if the decoder does not support inSampleSize.
-            // (For example, GIF/WBMP images.)
-            if(retBitmap != null && (retBitmap.getWidth() == width_org && retBitmap.getHeight() == height_org)) {
-                retBitmap = BitmapUtils.resizeBitmapByScale(retBitmap, 1/(float)scale, true);
-            }
-            return retBitmap;
+            return BitmapFactory.decodeStream(is, null, o2);
         } catch (FileNotFoundException e) {
             Log.e(LOGTAG, "FileNotFoundException: " + uri);
         } catch (Exception e) {
-            e.printStackTrace();
-        } catch (OutOfMemoryError e) {
             e.printStackTrace();
         } finally {
             Utils.closeSilently(is);
@@ -448,46 +436,37 @@ public class ImageLoader {
         return bitmap;
     }
 
-    static final int MAX_BITMAP_SAVE = 2048;
     public static Bitmap decodeUriWithBackouts(Context context, Uri sourceUri,
             BitmapFactory.Options options) {
         boolean noBitmap = true;
         int num_tries = 0;
         InputStream is = getInputStream(context, sourceUri);
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(is, null, options);
 
         if (options.inSampleSize < 1) {
             options.inSampleSize = 1;
         }
-
-        int width_tmp = options.outWidth;
-        int height_tmp = options.outHeight;
-        int width_org = width_tmp;
-        int height_org = height_tmp;
-
-        while (true) {
-            if (width_tmp <= MAX_BITMAP_SAVE && height_tmp <= MAX_BITMAP_SAVE) {
-                break;
+        // Stopgap fix for low-memory devices.
+        Bitmap bmap = null;
+        while (noBitmap) {
+            if (is == null) {
+                return null;
             }
-            width_tmp /= 2;
-            height_tmp /= 2;
-            options.inSampleSize *= 2;
+            try {
+                // Try to decode, downsample if low-memory.
+                bmap = BitmapFactory.decodeStream(is, null, options);
+                noBitmap = false;
+            } catch (java.lang.OutOfMemoryError e) {
+                // Try 5 times before failing for good.
+                if (++num_tries >= BITMAP_LOAD_BACKOUT_ATTEMPTS) {
+                    throw e;
+                }
+                is = null;
+                bmap = null;
+                System.gc();
+                is = getInputStream(context, sourceUri);
+                options.inSampleSize *= 2;
+            }
         }
-        Utils.closeSilently(is);
-
-        is = getInputStream(context, sourceUri);
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = options.inSampleSize;
-        o2.inMutable = true;
-
-        Bitmap bmap = BitmapFactory.decodeStream(is, null, o2);
-        // We need to resize down if the decoder does not support inSampleSize.
-        // (For example, GIF/WBMP images.)
-        if(bmap != null && (bmap.getWidth() == width_org && bmap.getHeight() == height_org)) {
-            bmap = BitmapUtils.resizeBitmapByScale(bmap, 1/(float)(o2.inSampleSize), true);
-        }
-
         Utils.closeSilently(is);
         return bmap;
     }

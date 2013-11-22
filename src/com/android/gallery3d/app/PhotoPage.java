@@ -1237,8 +1237,7 @@ public abstract class PhotoPage extends ActivityState implements
         onCommitDeleteImage();  // commit the previous deletion
         mDeletePath = path;
         mDeleteIsFocus = (offset == 0);
-        if(mMediaSet != null)
-            mMediaSet.addDeletion(path, mCurrentIndex + offset);
+        mMediaSet.addDeletion(path, mCurrentIndex + offset);
     }
 
     @Override
@@ -1247,8 +1246,7 @@ public abstract class PhotoPage extends ActivityState implements
         // If the deletion was done on the focused item, we want the model to
         // focus on it when it is undeleted.
         if (mDeleteIsFocus) mModel.setFocusHintPath(mDeletePath);
-        if(mMediaSet != null)
-            mMediaSet.removeDeletion(mDeletePath);
+        mMediaSet.removeDeletion(mDeletePath);
         mDeletePath = null;
     }
 
@@ -1409,7 +1407,7 @@ public abstract class PhotoPage extends ActivityState implements
                     // Account for preview/placeholder being the first item
                     resumeIndex++;
                 }
-                if ((mMediaSet != null) && (resumeIndex < mMediaSet.getMediaItemCount())) {
+                if (resumeIndex < mMediaSet.getMediaItemCount()) {
                     mCurrentIndex = resumeIndex;
                     mModel.moveTo(mCurrentIndex);
                 }

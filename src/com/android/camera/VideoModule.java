@@ -607,7 +607,7 @@ public class VideoModule implements CameraModule,
 
     @Override
     public void onShutterButtonClick() {
-        if (mUI.collapseCameraControls() || mSwitchingCamera || mActivity.mCameraDevice == null || !mPreviewing) return;
+        if (mUI.collapseCameraControls() || mSwitchingCamera) return;
 
         boolean stop = mMediaRecorderRecording;
 
@@ -775,7 +775,7 @@ public class VideoModule implements CameraModule,
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if (!mMediaRecorderRecording && !mPreviewing) startPreview();
+                    startPreview();
                 }
             }).start();
         } else {

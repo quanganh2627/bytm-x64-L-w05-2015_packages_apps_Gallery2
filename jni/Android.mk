@@ -6,7 +6,9 @@ LOCAL_CFLAGS += -DEGL_EGLEXT_PROTOTYPES
 
 LOCAL_SRC_FILES := jni_egl_fence.cpp
 
-LOCAL_SHARED_LIBRARIES :=  liblog libEGL
+LOCAL_SDK_VERSION := 9
+
+LOCAL_LDFLAGS :=  -llog -lEGL
 
 LOCAL_MODULE_TAGS := optional
 
@@ -20,7 +22,8 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_CPP_EXTENSION := .cc
-LOCAL_SHARED_LIBRARIES :=  liblog libjnigraphics
+LOCAL_LDFLAGS	:= -llog -ljnigraphics
+LOCAL_SDK_VERSION := 9
 LOCAL_MODULE    := libjni_filtershow_filters
 LOCAL_SRC_FILES := filters/gradient.c \
                    filters/saturated.c \
@@ -45,9 +48,5 @@ LOCAL_SRC_FILES := filters/gradient.c \
 
 LOCAL_CFLAGS    += -ffast-math -O3 -funroll-loops
 LOCAL_ARM_MODE := arm
-
-ifeq ($(TARGET_ARCH),x86)
-LOCAL_CFLAGS    += -funsigned-char
-endif
 
 include $(BUILD_SHARED_LIBRARY)

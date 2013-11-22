@@ -19,23 +19,15 @@ package com.android.gallery3d.filtershow.filters;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.editors.ImageOnlyEditor;
 
-import android.graphics.drawable.Drawable;
-import android.content.res.Resources;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-
 public class FilterImageBorderRepresentation extends FilterRepresentation {
     private int mDrawableResource = 0;
-    private Drawable mDrawable = null;
 
-    public FilterImageBorderRepresentation(int drawableResource, Resources rsc) {
+    public FilterImageBorderRepresentation(int drawableResource) {
         super("ImageBorder");
         mDrawableResource = drawableResource;
-        if (rsc != null && drawableResource != 0)
-            mDrawable = new BitmapDrawable(rsc, BitmapFactory.decodeResource(rsc, mDrawableResource));
         setFilterClass(ImageFilterBorder.class);
         setPriority(FilterRepresentation.TYPE_BORDER);
-        setTextId(R.string.none);
+        setTextId(R.string.borders);
         setEditorId(ImageOnlyEditor.ID);
         setShowEditingControls(false);
         setShowParameterValue(false);
@@ -51,7 +43,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
         FilterImageBorderRepresentation representation = (FilterImageBorderRepresentation) super.clone();
         representation.setName(getName());
         representation.setDrawableResource(getDrawableResource());
-        representation.setRepresentationDrawable(getRepresentationDrawable());
         return representation;
     }
 
@@ -60,7 +51,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
             FilterImageBorderRepresentation representation = (FilterImageBorderRepresentation) a;
             setName(representation.getName());
             setDrawableResource(representation.getDrawableResource());
-            setRepresentationDrawable(representation.getRepresentationDrawable());
         }
     }
 
@@ -80,7 +70,7 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
 
     @Override
     public int getTextId() {
-        return R.string.borders;
+        return R.string.none;
     }
 
     public boolean allowsMultipleInstances() {
@@ -89,14 +79,6 @@ public class FilterImageBorderRepresentation extends FilterRepresentation {
 
     public int getDrawableResource() {
         return mDrawableResource;
-    }
-
-    public Drawable getRepresentationDrawable() {
-        return mDrawable;
-    }
-
-    public void setRepresentationDrawable(Drawable drawable) {
-        mDrawable = drawable;
     }
 
     public void setDrawableResource(int drawableResource) {

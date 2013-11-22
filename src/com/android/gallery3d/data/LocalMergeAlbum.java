@@ -223,7 +223,7 @@ public class LocalMergeAlbum extends MediaSet implements ContentListener {
             mCacheRef = null;
         }
 
-        public synchronized MediaItem getItem(int index) {
+        public MediaItem getItem(int index) {
             boolean needLoading = false;
             ArrayList<MediaItem> cache = null;
             if (mCacheRef == null

@@ -130,11 +130,6 @@ public class LocalAlbum extends MediaSet {
         try {
             while (cursor.moveToNext()) {
                 int id = cursor.getInt(0);  // _id must be in the first column
-                String filePath = cursor.getString(8);
-                if (filePath == null || filePath.equals("")) {
-                    mResolver.delete(mBaseUri, "_id=?", new String[]{String.valueOf(id)});
-                    continue;
-                }
                 Path childPath = mItemPath.getChild(id);
                 MediaItem item = loadOrUpdateItem(childPath, cursor,
                         dataManager, mApplication, mIsImage);

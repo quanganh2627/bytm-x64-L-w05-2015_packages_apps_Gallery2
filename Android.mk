@@ -9,9 +9,6 @@ LOCAL_STATIC_JAVA_LIBRARIES += com.android.gallery3d.common2
 LOCAL_STATIC_JAVA_LIBRARIES += xmp_toolkit
 LOCAL_STATIC_JAVA_LIBRARIES += mp4parser
 LOCAL_STATIC_JAVA_LIBRARIES += android-support-v8-renderscript
-ifdef DOLBY_DAP
-LOCAL_JAVA_LIBRARIES += dolby_ds
-endif #DOLBY_DAP
 
 LOCAL_RENDERSCRIPT_TARGET_API := 18
 LOCAL_RENDERSCRIPT_COMPATIBILITY := 18
@@ -24,17 +21,9 @@ prev_compiled_rs_files := $(call all-renderscript-files-under, src)
 LOCAL_RENDERSCRIPT_SKIP_INSTALL := $(prev_compiled_rs_files)
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(prev_compiled_rs_files)
-ifdef DOLBY_DAP
-LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/CommonControllerOverlay.java, $(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/MovieActivity.java, $(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES += $(call all-java-files-under, src_dolby)
-endif
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 
 LOCAL_RESOURCE_DIR += $(LOCAL_PATH)/res
-ifdef DOLBY_DAP
-    LOCAL_RESOURCE_DIR += $(TOP)/vendor/intel/PRIVATE/dolby_ds1/apps/Gallery2/res_dolby
-endif
 
 LOCAL_AAPT_FLAGS := --auto-add-overlay
 

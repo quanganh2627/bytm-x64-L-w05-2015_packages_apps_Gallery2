@@ -449,8 +449,6 @@ public class IngestActivity extends Activity implements
     }
 
     private ProgressDialog getProgressDialog() {
-        if (mActive == false)
-            return null;
         if (mProgressDialog == null || !mProgressDialog.isShowing()) {
             mProgressDialog = new ProgressDialog(this);
             mProgressDialog.setCancelable(false);
@@ -460,8 +458,6 @@ public class IngestActivity extends Activity implements
 
     private void updateProgressDialog() {
         ProgressDialog dialog = getProgressDialog();
-        if (dialog == null)
-            return;
         boolean indeterminate = (mProgressState.max == 0);
         dialog.setIndeterminate(indeterminate);
         dialog.setProgressStyle(indeterminate ? ProgressDialog.STYLE_SPINNER
