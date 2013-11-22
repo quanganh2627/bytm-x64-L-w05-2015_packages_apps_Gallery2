@@ -25,7 +25,6 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.AudioEffect;
@@ -70,7 +69,6 @@ public class MoviePlayer implements
     private static final String CMDPAUSE = "pause";
 
     private static final String VIRTUALIZE_EXTRA = "virtualize";
-    private static final long BLACK_TIMEOUT = 500;
 
     // If we resume the acitivty with in RESUMEABLE_TIMEOUT, we will keep playing.
     // Otherwise, we pause the player.
@@ -109,6 +107,13 @@ public class MoviePlayer implements
         }
     };
 
+    private final Runnable mRemoveBackground = new Runnable() {
+        @Override
+        public void run() {
+            mRootView.setBackground(null);
+        }
+    };
+
     private final Runnable mProgressChecker = new Runnable() {
         @Override
         public void run() {
@@ -133,29 +138,16 @@ public class MoviePlayer implements
         mVideoView.setOnErrorListener(this);
         mVideoView.setOnCompletionListener(this);
         mVideoView.setVideoURI(mUri);
-        if (mVirtualizer != null) {
-            mVirtualizer.release();
-            mVirtualizer = null;
-        }
 
         Intent ai = movieActivity.getIntent();
         boolean virtualize = ai.getBooleanExtra(VIRTUALIZE_EXTRA, false);
         if (virtualize) {
             int session = mVideoView.getAudioSessionId();
             if (session != 0) {
-                Virtualizer virt = new Virtualizer(0, session);
-                AudioEffect.Descriptor descriptor = virt.getDescriptor();
-                String uuid = descriptor.uuid.toString();
-                if (uuid.equals("36103c52-8514-11e2-9e96-0800200c9a66") ||
-                        uuid.equals("36103c50-8514-11e2-9e96-0800200c9a66")) {
-                    mVirtualizer = virt;
-                    mVirtualizer.setEnabled(true);
-                } else {
-                    // This is not the audio virtualizer we're looking for
-                    virt.release();
-                }
+                mVirtualizer = new Virtualizer(0, session);
+                mVirtualizer.setEnabled(true);
             } else {
-                Log.w(TAG, "no session");
+                Log.w(TAG, "no audio session to virtualize");
             }
         }
         mVideoView.setOnTouchListener(new View.OnTouchListener() {
@@ -165,18 +157,17 @@ public class MoviePlayer implements
                 return true;
             }
         });
-
-        // The SurfaceView is transparent before drawing the first frame.
-        // This makes the UI flashing when open a video. (black -> old screen
-        // -> video) However, we have no way to know the timing of the first
-        // frame. So, we hide the VideoView for a while to make sure the
-        // video has been drawn on it.
-        mVideoView.postDelayed(new Runnable() {
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
-            public void run() {
-                mVideoView.setVisibility(View.VISIBLE);
+            public void onPrepared(MediaPlayer player) {
+                if (!mVideoView.canSeekForward() || !mVideoView.canSeekBackward()) {
+                    mController.setSeekable(false);
+                } else {
+                    mController.setSeekable(true);
+                }
+                setProgress();
             }
-        }, BLACK_TIMEOUT);
+        });
 
         setOnSystemUiVisibilityChangeListener();
         // Hide system UI by default
@@ -221,6 +212,18 @@ public class MoviePlayer implements
                 if ((diff & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) != 0
                         && (visibility & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0) {
                     mController.show();
+
+                    // We need to set the background to clear ghosting images
+                    // when ActionBar slides in. However, if we keep the background,
+                    // there will be one additional layer in HW composer, which is bad
+                    // to battery. As a solution, we remove the background when we
+                    // hide the action bar
+                    mHandler.removeCallbacks(mRemoveBackground);
+                } else {
+                    mHandler.removeCallbacks(mRemoveBackground);
+
+                    // Wait for the slide out animation, one second should be enough
+                    mHandler.postDelayed(mRemoveBackground, 1000);
                 }
             }
         });

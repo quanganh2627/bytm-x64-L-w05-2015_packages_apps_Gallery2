@@ -38,6 +38,7 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
     private int mWidth, mHeight;
     private float[] mTransform = new float[16];
     private boolean mHasTexture = false;
+    private boolean mFirstFrameShown = true;
 
     public SurfaceTextureScreenNail() {
     }
@@ -109,6 +110,10 @@ public abstract class SurfaceTextureScreenNail implements ScreenNail,
         synchronized (this) {
             if (!mHasTexture) return;
             mSurfaceTexture.updateTexImage();
+            if (mFirstFrameShown) {
+                mFirstFrameShown = false;
+                Log.d(TAG, "Performance: updateTexImage 1st frame to GFX");
+            }
             mSurfaceTexture.getTransformMatrix(mTransform);
 
             // Flip vertically.

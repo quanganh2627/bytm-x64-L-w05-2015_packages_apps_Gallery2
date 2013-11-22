@@ -152,15 +152,17 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public Job<Bitmap> requestImage(int type) {
-        return new LocalVideoRequest(mApplication, getPath(), type, filePath);
+        return new LocalVideoRequest(mApplication, getPath(), dateModifiedInSec,
+                type, filePath);
     }
 
     public static class LocalVideoRequest extends ImageCacheRequest {
         private String mLocalFilePath;
 
-        LocalVideoRequest(GalleryApp application, Path path, int type,
-                String localFilePath) {
-            super(application, path, type, MediaItem.getTargetSize(type));
+        LocalVideoRequest(GalleryApp application, Path path, long timeModified,
+                int type, String localFilePath) {
+            super(application, path, timeModified, type,
+                    MediaItem.getTargetSize(type));
             mLocalFilePath = localFilePath;
         }
 
@@ -180,7 +182,14 @@ public class LocalVideo extends LocalMediaItem {
 
     @Override
     public int getSupportedOperations() {
-        return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM | SUPPORT_MUTE;
+        if (mimeType.equals("video/mpeg4") || mimeType.equals("video/mp4")
+                || mimeType.equals("video/3gp") || mimeType.equals("video/3gpp")
+                || mimeType.equals("video/3gpp2")) {
+            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_TRIM
+                    | SUPPORT_MUTE;
+        } else {
+            return SUPPORT_DELETE | SUPPORT_SHARE | SUPPORT_PLAY | SUPPORT_INFO | SUPPORT_MUTE;
+        }
     }
 
     @Override
