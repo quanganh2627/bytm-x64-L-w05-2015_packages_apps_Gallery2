@@ -12,6 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This file was modified by Dolby Laboratories, Inc. The portions of the
+ * code that are surrounded by "DOLBY..." are copyrighted and
+ * licensed separately, as follows:
+ *
+ * (C) 2011-2012 Dolby Laboratories, Inc.
+ * All rights reserved.
+ *
+ * This program is protected under international and U.S. Copyright laws as
+ * an unpublished work. This program is confidential and proprietary to the
+ * copyright owners. Reproduction or disclosure, in whole or in part, or the
+ * production of derivative works therefrom without the express permission of
+ * the copyright owners is prohibited.
+ *
  */
 
 package com.android.gallery3d.app;
@@ -30,6 +44,9 @@ import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+// DOLBY_DAP_GUI
+import android.os.SystemProperties;
+// DOLBY_DAP_GUI END
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.view.KeyEvent;
@@ -41,6 +58,9 @@ import android.view.WindowManager;
 import android.widget.ShareActionProvider;
 
 import com.android.gallery3d.R;
+// DOLBY_DAP_GUI
+import com.android.gallery3d.app.DsClientHelper;
+// DOLBY_DAP_GUI END
 import com.android.gallery3d.common.ApiHelper;
 import com.android.gallery3d.common.Utils;
 
@@ -51,7 +71,8 @@ import com.android.gallery3d.common.Utils;
  * to set the action bar logo so the playback process looks more seamlessly integrated with
  * the original activity.
  */
-public class MovieActivity extends Activity {
+public class MovieActivity extends Activity
+{
     @SuppressWarnings("unused")
     private static final String TAG = "MovieActivity";
     public static final String KEY_LOGO_BITMAP = "logo-bitmap";
@@ -61,6 +82,9 @@ public class MovieActivity extends Activity {
     private boolean mFinishOnCompletion;
     private Uri mUri;
     private boolean mTreatUpAsBack;
+// DOLBY_DAP_GUI
+    private DsClientHelper mDsClientHelper;
+// DOLBY_DAP_GUI END
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     private void setSystemUiVisibility(View rootView) {
@@ -114,6 +138,11 @@ public class MovieActivity extends Activity {
         // We set the background in the theme to have the launching animation.
         // But for the performance (and battery), we remove the background here.
         win.setBackgroundDrawable(null);
+// DOLBY_DAP_GUI
+        if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
+            mDsClientHelper = new DsClientHelper(this);
+        }
+// DOLBY_DAP_GUI END
     }
 
     private void setActionBarLogoFromIntent(Intent intent) {
@@ -246,6 +275,17 @@ public class MovieActivity extends Activity {
     @Override
     public void onDestroy() {
         mPlayer.onDestroy();
+// DOLBY_DAP_GUI
+        if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
+            if (mDsClientHelper != null) {
+                mDsClientHelper.unbindDsClient();
+                if (!isFinishing()) {
+                    mDsClientHelper.updateDolbyStateUI();
+                }
+                mDsClientHelper.unbindDsSrvc();
+            }
+        }
+// DOLBY_DAP_GUI END
         super.onDestroy();
     }
 

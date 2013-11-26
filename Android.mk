@@ -9,6 +9,7 @@ LOCAL_STATIC_JAVA_LIBRARIES += com.android.gallery3d.common2
 LOCAL_STATIC_JAVA_LIBRARIES += xmp_toolkit
 LOCAL_STATIC_JAVA_LIBRARIES += mp4parser
 LOCAL_STATIC_JAVA_LIBRARIES += android-support-v8-renderscript
+LOCAL_JAVA_LIBRARIES += framework
 ifdef DOLBY_DAP
 LOCAL_JAVA_LIBRARIES += dolby_ds
 endif #DOLBY_DAP
@@ -25,9 +26,9 @@ LOCAL_RENDERSCRIPT_SKIP_INSTALL := $(prev_compiled_rs_files)
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(prev_compiled_rs_files)
 ifdef DOLBY_DAP
-LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/CommonControllerOverlay.java, $(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/MovieActivity.java, $(LOCAL_SRC_FILES))
-LOCAL_SRC_FILES += $(call all-java-files-under, src_dolby)
+LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/DsClientHelper.java, $(LOCAL_SRC_FILES))
+LOCAL_SRC_FILES := $(filter-out src/com/android/gallery3d/app/DsClientOverlayHelper.java, $(LOCAL_SRC_FILES))
+LOCAL_SRC_FILES += $(call all-java-files-under, ../../../vendor/intel/PRIVATE/dolby_ds1/apps/Gallery2/src_dolby)
 endif
 LOCAL_SRC_FILES += $(call all-java-files-under, src_pd)
 

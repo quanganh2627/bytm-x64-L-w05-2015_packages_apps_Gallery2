@@ -12,6 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * This file was modified by Dolby Laboratories, Inc. The portions of the
+ * code that are surrounded by "DOLBY..." are copyrighted and
+ * licensed separately, as follows:
+ *
+ * (C) 2011-2012 Dolby Laboratories, Inc.
+ * All rights reserved.
+ *
+ * This program is protected under international and U.S. Copyright laws as
+ * an unpublished work. This program is confidential and proprietary to the
+ * copyright owners. Reproduction or disclosure, in whole or in part, or the
+ * production of derivative works therefrom without the express permission of
+ * the copyright owners is prohibited.
+ *
  */
 
 package com.android.gallery3d.app;
@@ -19,6 +33,9 @@ package com.android.gallery3d.app;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Rect;
+// DOLBY_DAP_GUI
+import android.os.SystemProperties;
+// DOLBY_DAP_GUI END
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -31,8 +48,14 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+// DOLBY_DAP_GUI
+import android.widget.ToggleButton;
+// DOLBY_DAP_GUI END
 
 import com.android.gallery3d.R;
+// DOLBY_DAP_GUI
+import com.android.gallery3d.app.DsClientOverlayHelper;
+// DOLBY_DAP_GUI END
 
 /**
  * The common playback controller for the Movie Player or Video Trimming.
@@ -61,6 +84,9 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
     protected final LinearLayout mLoadingView;
     protected final TextView mErrorView;
     protected final ImageView mPlayPauseReplayView;
+// DOLBY_DAP_GUI
+    private DsClientOverlayHelper mDsClientOverlayHelper;
+// DOLBY_DAP_GUI END
 
     protected State mState;
 
@@ -114,6 +140,12 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
 
         mErrorView = createOverlayTextView(context);
         addView(mErrorView, matchParent);
+// DOLBY_DAP_GUI
+        if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
+            mDsClientOverlayHelper = new DsClientOverlayHelper(context);
+            addView(mDsClientOverlayHelper.getTB(), wrapContent);
+        }
+// DOLBY_DAP_GUI END
 
         RelativeLayout.LayoutParams params =
                 new RelativeLayout.LayoutParams(
@@ -284,6 +316,14 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
 
         // Put the play/pause/next/ previous button in the center of the screen
         layoutCenteredView(mPlayPauseReplayView, 0, 0, w, h);
+
+// DOLBY_DAP_GUI
+        if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
+            int[] dm = new int[4];
+            dm = mDsClientOverlayHelper.layoutDolbySwitch();
+            mDsClientOverlayHelper.getTB().layout(dm[0], dm[1], dm[0] + dm[2], dm[1] + dm[3]);
+        }
+// DOLBY_DAP_GUI END
 
         if (mMainView != null) {
             layoutCenteredView(mMainView, 0, 0, w, h);
