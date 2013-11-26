@@ -25,6 +25,7 @@ import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.AudioEffect;
@@ -219,6 +220,7 @@ public class MoviePlayer implements
                     // to battery. As a solution, we remove the background when we
                     // hide the action bar
                     mHandler.removeCallbacks(mRemoveBackground);
+                    mRootView.setBackgroundColor(Color.BLACK);
                 } else {
                     mHandler.removeCallbacks(mRemoveBackground);
 
