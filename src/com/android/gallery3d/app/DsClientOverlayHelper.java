@@ -17,7 +17,7 @@
  * code that are surrounded by "DOLBY..." are copyrighted and
  * licensed separately, as follows:
  *
- * (C) 2011-2012 Dolby Laboratories, Inc.
+ * (C) 2011-2013 Dolby Laboratories, Inc.
  * All rights reserved.
  *
  * This program is protected under international and U.S. Copyright laws as
@@ -32,15 +32,15 @@
 package com.android.gallery3d.app;
 
 import android.content.Context;
-import android.widget.ToggleButton;
+import android.widget.ImageView;
 
 public class DsClientOverlayHelper {
-    private ToggleButton mSwitch;
+    private ImageView mSwitch;
 
     public DsClientOverlayHelper(Context context) {
     }
 
-    public ToggleButton getTB() {
+    public ImageView getIV() {
         return mSwitch;
     }
     public int[] layoutDolbySwitch() {
