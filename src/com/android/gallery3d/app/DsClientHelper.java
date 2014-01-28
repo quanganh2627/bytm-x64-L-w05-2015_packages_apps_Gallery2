@@ -31,15 +31,17 @@
 //DOLBY_DAP_GUI
 package com.android.gallery3d.app;
 
-import android.os.Bundle;
-import android.widget.CompoundButton;
-import android.widget.ToggleButton;
+import android.view.View;
+import android.view.View.OnClickListener;
+
 import com.android.gallery3d.app.MovieActivity;
 
 public class DsClientHelper
 /* DOLBY_DAP_GUI INLINE */
-        implements CompoundButton.OnCheckedChangeListener
+        implements OnClickListener
 /* DOLBY_DAP_GUI INLINE END */{
+
+    public boolean mDsClientConnected;
 
     public DsClientHelper(MovieActivity ma) {
     }
@@ -47,7 +49,7 @@ public class DsClientHelper
     public void updateDolbyStateUI() {
     }
 
-    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+    public void onClick(View view) {
     }
 
     public void unbindDsClient() {

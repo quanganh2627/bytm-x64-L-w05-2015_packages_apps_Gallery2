@@ -277,13 +277,11 @@ public class MovieActivity extends Activity
         mPlayer.onDestroy();
 // DOLBY_DAP_GUI
         if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
-            if (mDsClientHelper != null) {
-                mDsClientHelper.unbindDsClient();
-                if (!isFinishing()) {
-                    mDsClientHelper.updateDolbyStateUI();
-                }
-                mDsClientHelper.unbindDsSrvc();
+            mDsClientHelper.unbindDsClient();
+            if (mDsClientHelper != null && mDsClientHelper.mDsClientConnected && !isFinishing()) {
+                mDsClientHelper.updateDolbyStateUI();
             }
+            mDsClientHelper.unbindDsSrvc();
         }
 // DOLBY_DAP_GUI END
         super.onDestroy();

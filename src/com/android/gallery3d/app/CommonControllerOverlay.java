@@ -17,7 +17,7 @@
  * code that are surrounded by "DOLBY..." are copyrighted and
  * licensed separately, as follows:
  *
- * (C) 2011-2012 Dolby Laboratories, Inc.
+ * (C) 2011-2013 Dolby Laboratories, Inc.
  * All rights reserved.
  *
  * This program is protected under international and U.S. Copyright laws as
@@ -143,7 +143,7 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
 // DOLBY_DAP_GUI
         if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
             mDsClientOverlayHelper = new DsClientOverlayHelper(context);
-            addView(mDsClientOverlayHelper.getTB(), wrapContent);
+            addView(mDsClientOverlayHelper.getIV(), wrapContent);
         }
 // DOLBY_DAP_GUI END
 
@@ -321,7 +321,7 @@ public abstract class CommonControllerOverlay extends FrameLayout implements
         if (SystemProperties.getBoolean("dolby.ds1.enable", false)) {
             int[] dm = new int[4];
             dm = mDsClientOverlayHelper.layoutDolbySwitch();
-            mDsClientOverlayHelper.getTB().layout(dm[0], dm[1], dm[0] + dm[2], dm[1] + dm[3]);
+            mDsClientOverlayHelper.getIV().layout(dm[0], dm[1], dm[0] + dm[2], dm[1] + dm[3]);
         }
 // DOLBY_DAP_GUI END
 
