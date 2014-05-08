@@ -36,10 +36,18 @@ LOCAL_SDK_VERSION := current
 # If this is an unbundled build (to install seprately) then include
 # the libraries in the APK, otherwise just put them in /system/lib and
 # leave them out of the APK
+ifeq ($(FLAG_GMS_AVAILABLE), yes)
+ifneq (,$(TARGET_BUILD_APPS))
+  LOCAL_JNI_SHARED_LIBRARIES := libjni_eglfence_old libjni_filtershow_filters_old librsjni libjni_jpegstream
+else
+  LOCAL_REQUIRED_MODULES := libjni_eglfence_old libjni_filtershow_filters_old libjni_jpegstream
+endif
+else
 ifneq (,$(TARGET_BUILD_APPS))
   LOCAL_JNI_SHARED_LIBRARIES := libjni_eglfence libjni_filtershow_filters librsjni libjni_jpegstream
 else
   LOCAL_REQUIRED_MODULES := libjni_eglfence libjni_filtershow_filters libjni_jpegstream
+endif
 endif
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags
