@@ -12,11 +12,8 @@ LOCAL_LDFLAGS :=  -llog -lEGL
 
 LOCAL_MODULE_TAGS := optional
 
-ifeq ($(FLAG_GMS_AVAILABLE), yes)
-LOCAL_MODULE := libjni_eglfence_old
-else
 LOCAL_MODULE := libjni_eglfence
-endif
+
 
 include $(BUILD_SHARED_LIBRARY)
 
@@ -27,11 +24,7 @@ include $(CLEAR_VARS)
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_LDFLAGS	:= -llog -ljnigraphics
 LOCAL_SDK_VERSION := 9
-ifeq ($(FLAG_GMS_AVAILABLE), yes)
-LOCAL_MODULE    := libjni_filtershow_filters_old
-else
 LOCAL_MODULE    := libjni_filtershow_filters
-endif
 LOCAL_SRC_FILES := filters/gradient.c \
                    filters/saturated.c \
                    filters/exposure.c \
