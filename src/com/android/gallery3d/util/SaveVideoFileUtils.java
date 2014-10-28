@@ -50,7 +50,7 @@ public class SaveVideoFileUtils {
         dstFileInfo.mFileName = new SimpleDateFormat(fileNameFormat).format(
                 new Date(System.currentTimeMillis()));
 
-        dstFileInfo.mFile = new File(dstFileInfo.mDirectory, dstFileInfo.mFileName + ".mp4");
+        //dstFileInfo.mFile = new File(dstFileInfo.mDirectory, dstFileInfo.mFileName + ".mp4");
         return dstFileInfo;
     }
 
