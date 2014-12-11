@@ -29,6 +29,7 @@ import android.view.View;
 import com.android.gallery3d.R;
 import com.android.gallery3d.filtershow.FilterShowActivity;
 import com.android.gallery3d.filtershow.ui.SelectionRenderer;
+import com.android.gallery3d.filtershow.imageshow.MasterImage;
 
 public class CategoryView extends IconView
         implements View.OnClickListener, SwipableView{
@@ -146,7 +147,9 @@ public class CategoryView extends IconView
 
     @Override
     public void onClick(View view) {
-        FilterShowActivity activity = (FilterShowActivity) getContext();
+        if(MasterImage.getImage().getPreset()==null)
+	    return;
+	FilterShowActivity activity = (FilterShowActivity) getContext();
         if (mAction.getType() == Action.ADD_ACTION) {
             activity.addNewPreset();
         } else if (mAction.getType() != Action.SPACER) {
